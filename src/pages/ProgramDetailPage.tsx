@@ -10,6 +10,7 @@ import { useProgressStore } from '@/stores/progressStore';
 import { useProgramStore, ProgramDay } from '@/stores/programStore';
 import { useSubscriptionStore } from '@/stores/subscriptionStore';
 import { ProgramPricing } from '@/components/subscription';
+import { FEATURES } from '@/config/features';
 import { cn } from '@/lib/utils';
 
 const intensityColors: Record<string, string> = {
@@ -137,11 +138,12 @@ export const ProgramDetailPage: React.FC = () => {
   }
 
   // Check if program is premium and user has no access
-  const isPremium = currentProgram.is_premium;
+  // Only enforce premium restrictions if subscriptions are enabled
+  const isPremium = currentProgram.is_premium && FEATURES.SUBSCRIPTIONS_ENABLED;
   const userHasAccess = !isPremium || hasAccess(programId || '');
 
-  // Show pricing for premium programs without access
-  if (isPremium && !userHasAccess) {
+  // Show pricing for premium programs without access (only if subscriptions enabled)
+  if (FEATURES.SUBSCRIPTIONS_ENABLED && isPremium && !userHasAccess) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-24">
         {/* Header */}

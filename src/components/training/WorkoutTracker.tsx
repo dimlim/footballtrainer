@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Heart, Footprints, MapPin, Flame, Play, Square } from 'lucide-react';

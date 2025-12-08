@@ -10,6 +10,7 @@ import { Card, Avatar, Button, Input } from '@/components/ui';
 import { NotificationSettings, FitnessTrackerSettings } from '@/components/settings';
 import { SubscriptionManager } from '@/components/subscription';
 import { useTranslation, languageOptions } from '@/lib/i18n';
+import { FEATURES } from '@/config/features';
 import { useAuthStore } from '@/stores/authStore';
 import { supabase } from '@/lib/supabase';
 import type { Language } from '@/types/database';
@@ -216,11 +217,12 @@ export const ProfilePage: React.FC = () => {
         : (language === 'uk' ? 'Прихований' : language === 'cs' ? 'Skrytý' : 'Hidden'),
       onClick: handleTogglePrivacy,
     },
-    {
+    // Subscription menu item - only if enabled
+    ...(FEATURES.SUBSCRIPTIONS_ENABLED ? [{
       icon: <CreditCard className="w-5 h-5" />,
       label: language === 'uk' ? 'Мої підписки' : language === 'cs' ? 'Moje předplatné' : 'My Subscriptions',
       onClick: () => navigate('/app/subscriptions'),
-    },
+    }] : []),
     {
       icon: <Shield className="w-5 h-5" />,
       label: t('profile.changePassword'),
@@ -318,14 +320,16 @@ export const ProfilePage: React.FC = () => {
         </Card>
       </motion.div>
 
-      {/* Subscription */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.08 }}
-      >
-        <SubscriptionManager />
-      </motion.div>
+      {/* Subscription - only if enabled */}
+      {FEATURES.SUBSCRIPTIONS_ENABLED && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+        >
+          <SubscriptionManager />
+        </motion.div>
+      )}
 
       {/* Notifications */}
       <motion.div

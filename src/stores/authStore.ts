@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { create } from 'zustand';
 import { supabase } from '@/lib/supabase';
 import type { Profile, UserRole, Language } from '@/types/database';

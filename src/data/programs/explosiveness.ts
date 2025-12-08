@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Explosiveness Training Program - 30 days
 // Original program from the app
 

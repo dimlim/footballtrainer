@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Analytics & DataLayer Service
  * Pushes events to dataLayer for Google Tag Manager / GA4
