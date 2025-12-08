@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -7,15 +6,12 @@ import {
   Users, 
   Activity, 
   AlertTriangle, 
-  Clock, 
   CheckCircle,
   XCircle,
-  ChevronRight,
   Calendar,
   Zap,
   TrendingUp,
-  Eye,
-  Filter
+  Eye
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';
@@ -36,7 +32,6 @@ export const PlayerActivityPage = () => {
     isLoading,
     loadTeamActivity,
     loadSuspiciousActivities,
-    loadPlayerDetail,
     verifyActivity,
     setSelectedPlayer
   } = useCoachActivityStore();
@@ -71,11 +66,6 @@ export const PlayerActivityPage = () => {
       addSuffix: true, 
       locale: getDateLocale() 
     });
-  };
-
-  const handleViewPlayer = (playerId: string) => {
-    setSelectedPlayer(playerId);
-    setActiveTab('detail');
   };
 
   const handleVerify = async (timingId: string, status: 'verified' | 'flagged') => {
@@ -320,7 +310,7 @@ export const PlayerActivityPage = () => {
 
                       <div className="flex gap-2">
                         <Button
-                          variant="success"
+                          variant="primary"
                           size="sm"
                           className="flex-1"
                           onClick={() => handleVerify(activity.id, 'verified')}

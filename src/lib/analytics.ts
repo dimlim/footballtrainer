@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Analytics & DataLayer Service
  * Pushes events to dataLayer for Google Tag Manager / GA4
@@ -28,7 +27,7 @@ export function pushEvent(eventName: string, eventParams?: Record<string, any>) 
   });
 
   // Debug in development
-  if (import.meta.env.DEV) {
+  if ((import.meta as any).env?.DEV) {
     console.log('📊 DataLayer Push:', eventName, eventParams);
   }
 }

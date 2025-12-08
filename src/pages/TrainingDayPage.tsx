@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -8,8 +7,7 @@ import { ExerciseItem } from '@/components/training';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';
 import { useProgressStore } from '@/stores/progressStore';
-import { getTrainingDay } from '@/data/trainingProgram';
-import { cn } from '@/lib/utils';
+import { getTrainingDay, LocalizedText } from '@/data/trainingProgram';
 
 export const TrainingDayPage: React.FC = () => {
   const { dayId } = useParams<{ dayId: string }>();
@@ -79,14 +77,14 @@ export const TrainingDayPage: React.FC = () => {
     high: t('training.intensity.high'),
   };
 
-  const getLocalizedArray = (obj: Record<string, string[]> | undefined): string[] => {
+  const getLocalizedArray = (obj: { uk: string[]; en: string[]; cs: string[] } | undefined): string[] => {
     if (!obj) return [];
-    return obj[language] || obj.uk || obj.en || [];
+    return obj[language as keyof typeof obj] || obj.uk || obj.en || [];
   };
 
-  const getLocalizedString = (obj: Record<string, string> | undefined): string => {
+  const getLocalizedString = (obj: LocalizedText | undefined): string => {
     if (!obj) return '';
-    return obj[language] || obj.uk || obj.en || '';
+    return obj[language as keyof LocalizedText] || obj.uk || obj.en || '';
   };
 
   const formatDuration = (minutes: number) => {
@@ -209,6 +207,7 @@ export const TrainingDayPage: React.FC = () => {
               <ExerciseItem
                 key={exercise.id}
                 id={exercise.id}
+                dayKey={`day-${dayId}`}
                 title={getLocalizedString(exercise.title)}
                 description={getLocalizedArray(exercise.description)}
                 sets={getLocalizedString(exercise.sets)}

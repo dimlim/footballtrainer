@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -6,7 +5,7 @@ import { Plus, Edit2, Trash2, Eye, EyeOff, Star, MoreVertical, Shield, MessageSq
 import { Card } from '@/components/ui/Card';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';
-import { useProgramStore, Program, ProgramRequest } from '@/stores/programStore';
+import { useProgramStore, Program } from '@/stores/programStore';
 import { categoryInfo } from '@/types/training';
 import { cn } from '@/lib/utils';
 

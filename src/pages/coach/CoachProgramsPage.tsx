@@ -1,13 +1,12 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Plus, Edit2, Trash2, Users, Eye, EyeOff, Calendar, MoreVertical } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff, Calendar, MoreVertical } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';
 import { useCoachProgramStore, CustomProgram } from '@/stores/coachProgramStore';
-import { categoryInfo, difficultyInfo } from '@/types/training';
+import { categoryInfo } from '@/types/training';
 import { cn } from '@/lib/utils';
 
 export const CoachProgramsPage: React.FC = () => {

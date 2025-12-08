@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, ArrowRight, PartyPopper, Sparkles } from 'lucide-react';
@@ -11,13 +10,12 @@ import confetti from 'canvas-confetti';
 
 export const SubscriptionSuccessPage: React.FC = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [_searchParams] = useSearchParams();
   const { language } = useTranslation();
   const { profile } = useAuthStore();
   const { loadUserSubscriptions, loadProgramAccess } = useSubscriptionStore();
   
-  const [isLoading, setIsLoading] = useState(true);
-  const sessionId = searchParams.get('session_id');
+  const [_isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Trigger confetti

@@ -1,9 +1,8 @@
-// @ts-nocheck
 import { create } from 'zustand';
 import { supabase } from '@/lib/supabase';
 import type { Profile, UserRole, Language } from '@/types/database';
 import type { User, Session } from '@supabase/supabase-js';
-import { trackUserLogin, trackUserRegistration, trackUserLogout, trackProfileUpdate } from '@/lib/analytics';
+import { trackUserLogin, trackUserRegistration, trackUserLogout } from '@/lib/analytics';
 import { activityLogger } from '@/lib/activityLogger';
 
 interface AuthState {

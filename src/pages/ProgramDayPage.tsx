@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -8,7 +7,7 @@ import { ExerciseItem } from '@/components/training';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';
 import { useProgressStore } from '@/stores/progressStore';
-import { useProgramStore, ProgramDay, DaySection, Exercise } from '@/stores/programStore';
+import { useProgramStore, Exercise } from '@/stores/programStore';
 import { cn } from '@/lib/utils';
 
 export const ProgramDayPage: React.FC = () => {

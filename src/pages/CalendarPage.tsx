@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -8,7 +7,7 @@ import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';
 import { useProgressStore } from '@/stores/progressStore';
 import { usePlayerProgramStore } from '@/stores/playerProgramStore';
-import { useProgramStore, Program, ProgramDay } from '@/stores/programStore';
+import { useProgramStore, ProgramDay } from '@/stores/programStore';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 

@@ -233,7 +233,7 @@ export const ProfilePage: React.FC = () => {
     },
   ];
 
-  const roleLabels = {
+  const roleLabels: Record<string, string> = {
     player: t('auth.rolePlayer'),
     parent: t('auth.roleParent'),
     coach: t('auth.roleCoach'),

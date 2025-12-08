@@ -1,8 +1,7 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ChevronRight, Clock, Zap, Trophy, Flame, Play, Calendar, Loader2, CalendarDays } from 'lucide-react';
+import { ChevronRight, Zap, Trophy, Flame, Play, Calendar, Loader2, CalendarDays } from 'lucide-react';
 import { Card, Progress } from '@/components/ui';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';
@@ -26,7 +25,7 @@ const categoryImages: Record<string, string> = {
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const { t, getLocalizedText, language } = useTranslation();
+  const { t, language } = useTranslation();
   const { profile } = useAuthStore();
   const { completedDays, loadCompletedDays } = useProgressStore();
   const { playerPrograms, loadPlayerPrograms, getProgramStartDate, getDayNumberForDate } = usePlayerProgramStore();

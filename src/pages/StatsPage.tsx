@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { 
@@ -6,8 +5,8 @@ import {
   Calendar, Target, Clock, Footprints, Heart, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { 
-  PieChart, Pie, Cell, ResponsiveContainer, 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, 
+  XAxis, YAxis, CartesianGrid, Tooltip,
   BarChart, Bar, AreaChart, Area
 } from 'recharts';
 import { Card, Avatar } from '@/components/ui';
@@ -48,10 +47,10 @@ export const StatsPage: React.FC = () => {
   const { profile } = useAuthStore();
   const [stats, setStats] = useState<PlayerStats | null>(null);
   const [viewMode, setViewMode] = useState<'local' | 'global'>('local');
-  const [timeRange, setTimeRange] = useState<TimeRange>('week');
+  const [_timeRange, _setTimeRange] = useState<TimeRange>('week');
   const [isLoading, setIsLoading] = useState(true);
   const [dailyProgress, setDailyProgress] = useState<DailyProgress[]>([]);
-  const [weeklyStats, setWeeklyStats] = useState<WeeklyStats[]>([]);
+  const [_weeklyStats, _setWeeklyStats] = useState<WeeklyStats[]>([]);
   const [fitnessData, setFitnessData] = useState<any[]>([]);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [records, setRecords] = useState<any[]>([]);
@@ -87,7 +86,7 @@ export const StatsPage: React.FC = () => {
     if (profile?.id) {
       loadAllData();
     }
-  }, [profile?.id, timeRange, selectedWeekOffset]);
+  }, [profile?.id, _timeRange, selectedWeekOffset]);
 
   const loadAllData = async () => {
     if (!profile?.id) return;

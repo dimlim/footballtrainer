@@ -47,7 +47,7 @@ export const BottomNav: React.FC = () => {
 
   const filteredItems = navItems.filter(item => {
     if (!item.roles) return true;
-    return profile?.role && item.roles.includes(profile.role);
+    return profile?.role && item.roles.includes(profile.role as 'player' | 'parent' | 'coach');
   });
 
   return (

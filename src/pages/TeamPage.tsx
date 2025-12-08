@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
@@ -10,7 +9,7 @@ import {
 import { Card, Button, Input } from '@/components/ui';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';
-import { useTeamStore, Team, TeamMember } from '@/stores/teamStore';
+import { useTeamStore, TeamMember } from '@/stores/teamStore';
 import { TeamScheduleManager } from '@/components/schedule';
 import { cn } from '@/lib/utils';
 
@@ -31,7 +30,6 @@ export const TeamPage: React.FC = () => {
     loadTeamMembers,
     removeMember,
     joinTeam,
-    leaveTeam,
     setCurrentTeam,
     clearError,
   } = useTeamStore();
@@ -545,7 +543,7 @@ export const TeamPage: React.FC = () => {
                           <div className="flex gap-2">
                           {isCoach ? (
                             <Button
-                              variant="destructive"
+                              variant="danger"
                               size="sm"
                               className="w-full"
                               onClick={(e) => {
@@ -714,7 +712,7 @@ export const TeamPage: React.FC = () => {
                   {t('common.cancel')}
                 </Button>
                 <Button
-                  variant="destructive"
+                  variant="danger"
                   className="flex-1"
                   onClick={() => handleDeleteTeam(showDeleteConfirm)}
                   disabled={isLoading}
@@ -783,7 +781,7 @@ export const TeamPage: React.FC = () => {
                   {t('common.cancel')}
                 </Button>
                 <Button
-                  variant="destructive"
+                  variant="danger"
                   className="flex-1"
                   onClick={() => handleRemoveMember(selectedMember.id)}
                   disabled={isLoading}

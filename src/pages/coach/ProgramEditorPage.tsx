@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -6,7 +5,7 @@ import { ArrowLeft, Save, Plus, Trash2, ChevronRight, GripVertical, Clock, MapPi
 import { Card } from '@/components/ui/Card';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';
-import { useCoachProgramStore, CustomProgram, CustomProgramDay } from '@/stores/coachProgramStore';
+import { useCoachProgramStore, CustomProgramDay } from '@/stores/coachProgramStore';
 import { categoryInfo, difficultyInfo, ProgramCategory, ProgramDifficulty } from '@/types/training';
 import { cn } from '@/lib/utils';
 

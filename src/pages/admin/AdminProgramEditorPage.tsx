@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowLeft, Save, Plus, Trash2, ChevronRight, GripVertical, Clock, MapPin, ChevronDown, ChevronUp, Shield } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, GripVertical, Clock, MapPin, ChevronDown, ChevronUp, Shield } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';

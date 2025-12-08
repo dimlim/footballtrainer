@@ -1,8 +1,7 @@
-// @ts-nocheck
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Search, Calendar, ChevronRight, Zap, Plus, Check, Loader2, ArrowLeft, Filter } from 'lucide-react';
+import { Search, Calendar, ChevronRight, Zap, Plus, Check, Loader2, ArrowLeft } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';
@@ -11,7 +10,6 @@ import { usePlayerProgramStore } from '@/stores/playerProgramStore';
 import { categoryInfo, difficultyInfo, ProgramCategory, ProgramDifficulty } from '@/types/training';
 import { cn } from '@/lib/utils';
 import { getAgeCategory, AGE_CATEGORIES, isProgramSuitableForAge } from '@/lib/ageCategories';
-import { AgeCategory } from '@/types/database';
 
 // Default images for categories
 const categoryImages: Record<string, string> = {
@@ -28,7 +26,7 @@ export const ProgramsPage: React.FC = () => {
   const { language } = useTranslation();
   const { profile } = useAuthStore();
   const { programs, isLoading, loadPrograms } = useProgramStore();
-  const { playerPrograms, loadPlayerPrograms, addProgram, removeProgram, hasProgram } = usePlayerProgramStore();
+  const { loadPlayerPrograms, addProgram, removeProgram, hasProgram } = usePlayerProgramStore();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ProgramCategory | 'all'>('all');
@@ -119,12 +117,6 @@ export const ProgramsPage: React.FC = () => {
     return filtered;
   }, [programs, searchQuery, selectedCategory, selectedDifficulty, filterByAge, profile?.birth_date, language]);
   
-  // Check if program is suitable for user's age
-  const isProgramForUserAge = (program: Program) => {
-    if (!profile?.birth_date || !program.age_categories) return true;
-    return isProgramSuitableForAge(program.age_categories, profile.birth_date);
-  };
-
   const categories: (ProgramCategory | 'all')[] = ['all', 'explosiveness', 'endurance', 'technique', 'strength', 'agility', 'recovery'];
   
   const getCategoryLabel = (cat: ProgramCategory | 'all') => {

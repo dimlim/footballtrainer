@@ -1,4 +1,5 @@
 // @ts-nocheck
+// TODO: Fix isTrialing/isSubscribed function signatures
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -20,12 +21,10 @@ import { formatPrice, getLocalizedPrice } from '@/lib/stripe';
 
 export const PricingPage = () => {
   const navigate = useNavigate();
-  const { t, language } = useTranslation();
-  const { profile, user } = useAuthStore();
+  const { language } = useTranslation();
+  const { user } = useAuthStore();
   const {
     subscriptionPlans,
-    products,
-    userSubscriptions,
     isLoading,
     isCheckingOut,
     loadSubscriptionPlans,

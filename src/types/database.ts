@@ -1,11 +1,8 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[];
+// Re-export auto-generated Supabase types
+export type { Database, Json } from './supabase';
+import type { Database } from './supabase';
 
+// Custom type aliases for easier usage
 export type UserRole = 'player' | 'parent' | 'coach';
 export type Language = 'uk' | 'en' | 'cs';
 export type Intensity = 'low' | 'medium' | 'high';
@@ -24,382 +21,110 @@ export interface LocalizedText {
   cs: string;
 }
 
-export interface Database {
-  public: {
-    Tables: {
-      profiles: {
-        Row: {
-          id: string;
-          email: string;
-          full_name: string;
-          avatar_url: string | null;
-          role: UserRole;
-          language: Language;
-          show_in_leaderboard: boolean;
-          onboarding_completed: boolean;
-          birth_date: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id: string;
-          email: string;
-          full_name: string;
-          avatar_url?: string | null;
-          role?: UserRole;
-          language?: Language;
-          show_in_leaderboard?: boolean;
-          onboarding_completed?: boolean;
-          birth_date?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          email?: string;
-          full_name?: string;
-          avatar_url?: string | null;
-          role?: UserRole;
-          language?: Language;
-          show_in_leaderboard?: boolean;
-          onboarding_completed?: boolean;
-          birth_date?: string | null;
-          updated_at?: string;
-        };
-      };
-      teams: {
-        Row: {
-          id: string;
-          name: string;
-          code: string;
-          coach_id: string;
-          created_at: string;
-          settings: Json;
-        };
-        Insert: {
-          id?: string;
-          name: string;
-          code: string;
-          coach_id: string;
-          created_at?: string;
-          settings?: Json;
-        };
-        Update: {
-          name?: string;
-          code?: string;
-          settings?: Json;
-        };
-      };
-      team_members: {
-        Row: {
-          id: string;
-          team_id: string;
-          player_id: string;
-          parent_id: string | null;
-          role: TeamMemberRole;
-          joined_at: string;
-          status: TeamMemberStatus;
-        };
-        Insert: {
-          id?: string;
-          team_id: string;
-          player_id: string;
-          parent_id?: string | null;
-          role?: TeamMemberRole;
-          joined_at?: string;
-          status?: TeamMemberStatus;
-        };
-        Update: {
-          role?: TeamMemberRole;
-          status?: TeamMemberStatus;
-          parent_id?: string | null;
-        };
-      };
-      training_programs: {
-        Row: {
-          id: string;
-          title: LocalizedText;
-          description: LocalizedText;
-          author_id: string;
-          is_public: boolean;
-          difficulty: Difficulty;
-          duration_weeks: number;
-          focus_areas: string[];
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          title: LocalizedText;
-          description: LocalizedText;
-          author_id: string;
-          is_public?: boolean;
-          difficulty?: Difficulty;
-          duration_weeks?: number;
-          focus_areas?: string[];
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          title?: LocalizedText;
-          description?: LocalizedText;
-          is_public?: boolean;
-          difficulty?: Difficulty;
-          duration_weeks?: number;
-          focus_areas?: string[];
-          updated_at?: string;
-        };
-      };
-      program_days: {
-        Row: {
-          id: string;
-          program_id: string;
-          day_number: number;
-          title: LocalizedText;
-          intensity: Intensity;
-          location: Location;
-          duration_minutes: number;
-          focus: LocalizedText;
-          order_index: number;
-        };
-        Insert: {
-          id?: string;
-          program_id: string;
-          day_number: number;
-          title: LocalizedText;
-          intensity?: Intensity;
-          location?: Location;
-          duration_minutes?: number;
-          focus: LocalizedText;
-          order_index?: number;
-        };
-        Update: {
-          day_number?: number;
-          title?: LocalizedText;
-          intensity?: Intensity;
-          location?: Location;
-          duration_minutes?: number;
-          focus?: LocalizedText;
-          order_index?: number;
-        };
-      };
-      day_sections: {
-        Row: {
-          id: string;
-          day_id: string;
-          title: LocalizedText;
-          duration_minutes: number | null;
-          order_index: number;
-        };
-        Insert: {
-          id?: string;
-          day_id: string;
-          title: LocalizedText;
-          duration_minutes?: number | null;
-          order_index?: number;
-        };
-        Update: {
-          title?: LocalizedText;
-          duration_minutes?: number | null;
-          order_index?: number;
-        };
-      };
-      exercises: {
-        Row: {
-          id: string;
-          section_id: string;
-          title: LocalizedText;
-          description: LocalizedText | null;
-          sets: string | null;
-          reps: string | null;
-          rest_seconds: number | null;
-          type: ExerciseType;
-          input_label: LocalizedText | null;
-          note: LocalizedText | null;
-          timer_duration: number | null;
-          video_url: string | null;
-          order_index: number;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          section_id: string;
-          title: LocalizedText;
-          description?: LocalizedText | null;
-          sets?: string | null;
-          reps?: string | null;
-          rest_seconds?: number | null;
-          type?: ExerciseType;
-          input_label?: LocalizedText | null;
-          note?: LocalizedText | null;
-          timer_duration?: number | null;
-          video_url?: string | null;
-          order_index?: number;
-          created_at?: string;
-        };
-        Update: {
-          title?: LocalizedText;
-          description?: LocalizedText | null;
-          sets?: string | null;
-          reps?: string | null;
-          rest_seconds?: number | null;
-          type?: ExerciseType;
-          input_label?: LocalizedText | null;
-          note?: LocalizedText | null;
-          timer_duration?: number | null;
-          video_url?: string | null;
-          order_index?: number;
-        };
-      };
-      assigned_programs: {
-        Row: {
-          id: string;
-          program_id: string;
-          player_id: string;
-          assigned_by: string;
-          start_date: string;
-          status: ProgramStatus;
-          schedule: Json;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          program_id: string;
-          player_id: string;
-          assigned_by: string;
-          start_date: string;
-          status?: ProgramStatus;
-          schedule?: Json;
-          created_at?: string;
-        };
-        Update: {
-          start_date?: string;
-          status?: ProgramStatus;
-          schedule?: Json;
-        };
-      };
-      player_progress: {
-        Row: {
-          id: string;
-          player_id: string;
-          assigned_program_id: string;
-          day_id: string;
-          exercise_id: string;
-          completed: boolean;
-          measurement_value: string | null;
-          completed_at: string | null;
-          notes: string | null;
-        };
-        Insert: {
-          id?: string;
-          player_id: string;
-          assigned_program_id: string;
-          day_id: string;
-          exercise_id: string;
-          completed?: boolean;
-          measurement_value?: string | null;
-          completed_at?: string | null;
-          notes?: string | null;
-        };
-        Update: {
-          completed?: boolean;
-          measurement_value?: string | null;
-          completed_at?: string | null;
-          notes?: string | null;
-        };
-      };
-      achievements: {
-        Row: {
-          id: string;
-          title: LocalizedText;
-          description: LocalizedText;
-          icon: string;
-          condition_type: string;
-          condition_value: number;
-          xp_reward: number;
-        };
-        Insert: {
-          id?: string;
-          title: LocalizedText;
-          description: LocalizedText;
-          icon: string;
-          condition_type: string;
-          condition_value: number;
-          xp_reward?: number;
-        };
-        Update: {
-          title?: LocalizedText;
-          description?: LocalizedText;
-          icon?: string;
-          condition_type?: string;
-          condition_value?: number;
-          xp_reward?: number;
-        };
-      };
-      player_achievements: {
-        Row: {
-          id: string;
-          player_id: string;
-          achievement_id: string;
-          earned_at: string;
-          notified: boolean;
-        };
-        Insert: {
-          id?: string;
-          player_id: string;
-          achievement_id: string;
-          earned_at?: string;
-          notified?: boolean;
-        };
-        Update: {
-          notified?: boolean;
-        };
-      };
-      player_stats: {
-        Row: {
-          id: string;
-          player_id: string;
-          total_xp: number;
-          current_streak: number;
-          longest_streak: number;
-          total_exercises: number;
-          total_training_minutes: number;
-          last_training_date: string | null;
-        };
-        Insert: {
-          id?: string;
-          player_id: string;
-          total_xp?: number;
-          current_streak?: number;
-          longest_streak?: number;
-          total_exercises?: number;
-          total_training_minutes?: number;
-          last_training_date?: string | null;
-        };
-        Update: {
-          total_xp?: number;
-          current_streak?: number;
-          longest_streak?: number;
-          total_exercises?: number;
-          total_training_minutes?: number;
-          last_training_date?: string | null;
-        };
-      };
-    };
-  };
-}
+// Table types - extracted from generated Database type
+export type Tables = Database['public']['Tables'];
+export type Enums = Database['public']['Enums'];
 
-// Helper types for easier usage
-export type Profile = Database['public']['Tables']['profiles']['Row'];
-export type Team = Database['public']['Tables']['teams']['Row'];
-export type TeamMember = Database['public']['Tables']['team_members']['Row'];
-export type TrainingProgram = Database['public']['Tables']['training_programs']['Row'];
-export type ProgramDay = Database['public']['Tables']['program_days']['Row'];
-export type DaySection = Database['public']['Tables']['day_sections']['Row'];
-export type Exercise = Database['public']['Tables']['exercises']['Row'];
-export type AssignedProgram = Database['public']['Tables']['assigned_programs']['Row'];
-export type PlayerProgress = Database['public']['Tables']['player_progress']['Row'];
-export type Achievement = Database['public']['Tables']['achievements']['Row'];
-export type PlayerAchievement = Database['public']['Tables']['player_achievements']['Row'];
-export type PlayerStats = Database['public']['Tables']['player_stats']['Row'];
+// Profile types
+export type Profile = Tables['profiles']['Row'];
+export type ProfileInsert = Tables['profiles']['Insert'];
+export type ProfileUpdate = Tables['profiles']['Update'];
 
+// Team types
+export type Team = Tables['teams']['Row'];
+export type TeamInsert = Tables['teams']['Insert'];
+export type TeamUpdate = Tables['teams']['Update'];
+
+// Team member types
+export type TeamMember = Tables['team_members']['Row'];
+export type TeamMemberInsert = Tables['team_members']['Insert'];
+export type TeamMemberUpdate = Tables['team_members']['Update'];
+
+// Program types (from new schema)
+export type Program = Tables['programs']['Row'];
+export type ProgramInsert = Tables['programs']['Insert'];
+export type ProgramUpdate = Tables['programs']['Update'];
+
+// Program day types
+export type ProgramDay = Tables['program_days']['Row'];
+export type ProgramDayInsert = Tables['program_days']['Insert'];
+export type ProgramDayUpdate = Tables['program_days']['Update'];
+
+// Day section types
+export type DaySection = Tables['day_sections']['Row'];
+export type DaySectionInsert = Tables['day_sections']['Insert'];
+export type DaySectionUpdate = Tables['day_sections']['Update'];
+
+// Exercise types
+export type Exercise = Tables['exercises']['Row'];
+export type ExerciseInsert = Tables['exercises']['Insert'];
+export type ExerciseUpdate = Tables['exercises']['Update'];
+
+// Player program types
+export type PlayerProgram = Tables['player_programs']['Row'];
+export type PlayerProgramInsert = Tables['player_programs']['Insert'];
+export type PlayerProgramUpdate = Tables['player_programs']['Update'];
+
+// Player progress types
+export type PlayerProgressV2 = Tables['player_progress_v2']['Row'];
+export type PlayerProgressV2Insert = Tables['player_progress_v2']['Insert'];
+export type PlayerProgressV2Update = Tables['player_progress_v2']['Update'];
+
+// Player day completion types
+export type PlayerDayCompletion = Tables['player_day_completions']['Row'];
+export type PlayerDayCompletionInsert = Tables['player_day_completions']['Insert'];
+export type PlayerDayCompletionUpdate = Tables['player_day_completions']['Update'];
+
+// Achievement types
+export type Achievement = Tables['achievements']['Row'];
+export type AchievementInsert = Tables['achievements']['Insert'];
+export type AchievementUpdate = Tables['achievements']['Update'];
+
+// Player achievement types
+export type PlayerAchievement = Tables['player_achievements']['Row'];
+export type PlayerAchievementInsert = Tables['player_achievements']['Insert'];
+export type PlayerAchievementUpdate = Tables['player_achievements']['Update'];
+
+// Player stats types
+export type PlayerStats = Tables['player_stats']['Row'];
+export type PlayerStatsInsert = Tables['player_stats']['Insert'];
+export type PlayerStatsUpdate = Tables['player_stats']['Update'];
+
+// Schedule types
+export type PlayerScheduleSettings = Tables['player_schedule_settings']['Row'];
+export type PlayerScheduleSettingsInsert = Tables['player_schedule_settings']['Insert'];
+export type PlayerScheduleSettingsUpdate = Tables['player_schedule_settings']['Update'];
+
+export type TeamSchedule = Tables['team_schedule']['Row'];
+export type TeamScheduleInsert = Tables['team_schedule']['Insert'];
+export type TeamScheduleUpdate = Tables['team_schedule']['Update'];
+
+export type TeamEvent = Tables['team_events']['Row'];
+export type TeamEventInsert = Tables['team_events']['Insert'];
+export type TeamEventUpdate = Tables['team_events']['Update'];
+
+export type PlayerCalendar = Tables['player_calendar']['Row'];
+export type PlayerCalendarInsert = Tables['player_calendar']['Insert'];
+export type PlayerCalendarUpdate = Tables['player_calendar']['Update'];
+
+// Activity logging types
+export type PlayerActivityLog = Tables['player_activity_log']['Row'];
+export type PlayerSession = Tables['player_sessions']['Row'];
+export type ExerciseTiming = Tables['exercise_timing']['Row'];
+export type PlayerDailySummary = Tables['player_daily_summary']['Row'];
+
+// Notification types
+export type PushSubscription = Tables['push_subscriptions']['Row'];
+export type NotificationPreference = Tables['notification_preferences']['Row'];
+export type NotificationHistory = Tables['notification_history']['Row'];
+
+// Subscription types
+export type Product = Tables['products']['Row'];
+export type SubscriptionPlan = Tables['subscription_plans']['Row'];
+export type UserSubscription = Tables['user_subscriptions']['Row'];
+export type TeamSubscription = Tables['team_subscriptions']['Row'];
+
+// Legacy types for backward compatibility
+export type TrainingProgram = Tables['training_programs']['Row'];
+export type AssignedProgram = Tables['assigned_programs']['Row'];
+export type PlayerProgress = Tables['player_progress']['Row'];

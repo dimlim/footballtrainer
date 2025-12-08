@@ -1,8 +1,7 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { motion, Reorder } from 'motion/react';
-import { ArrowLeft, Save, Plus, Trash2, GripVertical, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { motion } from 'motion/react';
+import { ArrowLeft, Plus, Trash2, GripVertical, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { useTranslation } from '@/lib/i18n';
 import { useCoachProgramStore, CustomDaySection, CustomExercise } from '@/stores/coachProgramStore';

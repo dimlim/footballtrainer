@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Trophy, Star, Flame, Target, Zap } from 'lucide-react';
@@ -7,7 +6,7 @@ import { AchievementCard } from '@/components/achievements';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';
 import { useAchievementStore } from '@/stores/achievementStore';
-import { achievements, Achievement } from '@/data/achievements';
+import { achievements } from '@/data/achievements';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 
@@ -195,7 +194,7 @@ export const AchievementsPage: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              {category.achievements.map((achievement, idx) => (
+              {category.achievements.map((achievement) => (
                 <AchievementCard
                   key={achievement.id}
                   achievement={achievement}

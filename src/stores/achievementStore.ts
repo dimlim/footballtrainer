@@ -1,9 +1,7 @@
-// @ts-nocheck
 import { create } from 'zustand';
 import { supabase } from '@/lib/supabase';
 import { achievements, Achievement } from '@/data/achievements';
 import { showLocalNotification, getNotificationPermission } from '@/lib/pushNotifications';
-import { trackAchievementUnlocked } from '@/lib/analytics';
 
 interface PlayerAchievement {
   achievement_id: string;
