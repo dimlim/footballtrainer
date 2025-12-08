@@ -1,19 +1,23 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { 
   User, Globe, Bell, LogOut, ChevronRight, 
   Shield, HelpCircle, Mail, Check, Camera, Loader2,
-  Eye, EyeOff, X
+  Eye, EyeOff, X, CreditCard, Cake
 } from 'lucide-react';
 import { Card, Avatar, Button, Input } from '@/components/ui';
 import { NotificationSettings, FitnessTrackerSettings } from '@/components/settings';
+import { SubscriptionManager } from '@/components/subscription';
 import { useTranslation, languageOptions } from '@/lib/i18n';
 import { useAuthStore } from '@/stores/authStore';
 import { supabase } from '@/lib/supabase';
 import type { Language } from '@/types/database';
 import { cn } from '@/lib/utils';
+import { getAgeCategory, AGE_CATEGORIES, formatAge, formatBirthDate } from '@/lib/ageCategories';
 
 export const ProfilePage: React.FC = () => {
+  const navigate = useNavigate();
   const { t, language, setLanguage } = useTranslation();
   const { profile, signOut, updateProfile } = useAuthStore();
   
@@ -26,8 +30,13 @@ export const ProfilePage: React.FC = () => {
   
   // Edit profile state
   const [editName, setEditName] = useState(profile?.full_name || '');
+  const [editBirthDate, setEditBirthDate] = useState(profile?.birth_date || '');
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Age category info
+  const userAgeCategory = profile?.birth_date ? getAgeCategory(profile.birth_date) : null;
+  const userAgeCategoryInfo = userAgeCategory ? AGE_CATEGORIES[userAgeCategory] : null;
   
   // Password change state
   const [newPassword, setNewPassword] = useState('');
@@ -49,6 +58,9 @@ export const ProfilePage: React.FC = () => {
       'profile.name': { uk: "Ім'я", en: 'Name', cs: 'Jméno' },
       'profile.darkMode': { uk: 'Темна тема', en: 'Dark mode', cs: 'Tmavý režim' },
       'profile.lightMode': { uk: 'Світла тема', en: 'Light mode', cs: 'Světlý režim' },
+      'profile.birthDate': { uk: 'Дата народження', en: 'Birth date', cs: 'Datum narození' },
+      'profile.ageCategory': { uk: 'Вікова категорія', en: 'Age category', cs: 'Věková kategorie' },
+      'profile.notSet': { uk: 'Не вказано', en: 'Not set', cs: 'Nenastaveno' },
     };
     return texts[key]?.[language] || texts[key]?.en || key;
   };
@@ -63,7 +75,15 @@ export const ProfilePage: React.FC = () => {
     setIsLoading(true);
     setError(null);
     
-    const { error } = await updateProfile({ full_name: editName.trim() });
+    const updates: { full_name: string; birth_date?: string } = { 
+      full_name: editName.trim() 
+    };
+    
+    if (editBirthDate) {
+      updates.birth_date = editBirthDate;
+    }
+    
+    const { error } = await updateProfile(updates);
     
     if (error) {
       setError(error);
@@ -197,6 +217,11 @@ export const ProfilePage: React.FC = () => {
       onClick: handleTogglePrivacy,
     },
     {
+      icon: <CreditCard className="w-5 h-5" />,
+      label: language === 'uk' ? 'Мої підписки' : language === 'cs' ? 'Moje předplatné' : 'My Subscriptions',
+      onClick: () => navigate('/app/subscriptions'),
+    },
+    {
       icon: <Shield className="w-5 h-5" />,
       label: t('profile.changePassword'),
       onClick: () => setShowPasswordModal(true),
@@ -270,12 +295,36 @@ export const ProfilePage: React.FC = () => {
             <Mail className="w-4 h-4" />
             {profile?.email}
           </p>
-          <div className="mt-2">
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
             <span className="inline-flex items-center px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
               {profile?.role ? roleLabels[profile.role] : 'User'}
             </span>
+            {userAgeCategoryInfo && (
+              <span 
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium"
+                style={{ backgroundColor: `${userAgeCategoryInfo.color}20`, color: userAgeCategoryInfo.color }}
+              >
+                <span>{userAgeCategoryInfo.icon}</span>
+                {userAgeCategoryInfo.label[language]}
+              </span>
+            )}
           </div>
+          {profile?.birth_date && (
+            <p className="text-sm text-gray-500 mt-2 flex items-center justify-center gap-1">
+              <Cake className="w-4 h-4" />
+              {formatAge(profile.birth_date, language)} • {formatBirthDate(profile.birth_date, language)}
+            </p>
+          )}
         </Card>
+      </motion.div>
+
+      {/* Subscription */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+      >
+        <SubscriptionManager />
       </motion.div>
 
       {/* Notifications */}
@@ -398,6 +447,26 @@ export const ProfilePage: React.FC = () => {
                     onChange={(e) => setEditName(e.target.value)}
                     placeholder={getText('profile.name')}
                   />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {getText('profile.birthDate')}
+                  </label>
+                  <input
+                    type="date"
+                    value={editBirthDate}
+                    onChange={(e) => setEditBirthDate(e.target.value)}
+                    max={new Date().toISOString().split('T')[0]}
+                    min="1950-01-01"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all"
+                  />
+                  {editBirthDate && (
+                    <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                      <span>{AGE_CATEGORIES[getAgeCategory(editBirthDate)].icon}</span>
+                      {getText('profile.ageCategory')}: {AGE_CATEGORIES[getAgeCategory(editBirthDate)].label[language]}
+                    </p>
+                  )}
                 </div>
               </div>
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { 
   Heart, Footprints, MapPin, Watch, Smartphone, 
-  Activity, Bluetooth, BluetoothOff, Check, X,
+  Activity, Bluetooth, Check, X,
   RefreshCw, Plus, AlertCircle
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
@@ -23,8 +23,6 @@ export const FitnessTrackerSettings: React.FC<FitnessTrackerSettingsProps> = ({ 
     isHRConnected,
     connectHR,
     disconnectHR,
-    connections,
-    refreshConnections,
     weeklyData,
     saveManualData,
   } = useFitnessTracker(playerId);

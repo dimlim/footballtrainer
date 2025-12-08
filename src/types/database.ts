@@ -15,6 +15,7 @@ export type ExerciseType = 'checkbox' | 'input' | 'timer';
 export type ProgramStatus = 'active' | 'paused' | 'completed';
 export type TeamMemberRole = 'player' | 'assistant';
 export type TeamMemberStatus = 'active' | 'inactive' | 'pending';
+export type AgeCategory = 'U8' | 'U10' | 'U12' | 'U14' | 'U16' | 'U18' | 'Senior';
 
 // Localized content type
 export interface LocalizedText {
@@ -35,6 +36,8 @@ export interface Database {
           role: UserRole;
           language: Language;
           show_in_leaderboard: boolean;
+          onboarding_completed: boolean;
+          birth_date: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -46,6 +49,8 @@ export interface Database {
           role?: UserRole;
           language?: Language;
           show_in_leaderboard?: boolean;
+          onboarding_completed?: boolean;
+          birth_date?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -57,6 +62,8 @@ export interface Database {
           role?: UserRole;
           language?: Language;
           show_in_leaderboard?: boolean;
+          onboarding_completed?: boolean;
+          birth_date?: string | null;
           updated_at?: string;
         };
       };

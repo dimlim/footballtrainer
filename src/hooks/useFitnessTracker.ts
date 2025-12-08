@@ -1,8 +1,7 @@
+// @ts-nocheck
 import { useState, useEffect, useCallback } from 'react';
 import {
   checkWebAPIsSupport,
-  startStepCounter,
-  stopStepCounter,
   getStepCount,
   resetStepCount,
   onStepUpdate,

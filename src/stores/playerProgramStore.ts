@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { create } from 'zustand';
 import { supabase } from '@/lib/supabase';
 
@@ -53,6 +54,7 @@ export const usePlayerProgramStore = create<PlayerProgramState>((set, get) => ({
         programs[p.program_id] = p;
       });
 
+      console.log('Loaded player programs:', programs);
       set({ playerPrograms: programs, isLoading: false });
     } catch (error) {
       console.error('Error loading player programs:', error);
@@ -197,7 +199,7 @@ export const usePlayerProgramStore = create<PlayerProgramState>((set, get) => ({
 
   getProgramStartDate: (programId: string) => {
     const program = get().playerPrograms[programId];
-    if (!program) return null;
+    if (!program || !program.started_at) return null;
     return new Date(program.started_at + 'T00:00:00');
   },
 

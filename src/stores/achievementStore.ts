@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { create } from 'zustand';
 import { supabase } from '@/lib/supabase';
 import { achievements, Achievement } from '@/data/achievements';

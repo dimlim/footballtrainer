@@ -4,6 +4,8 @@ import { supabase } from '@/lib/supabase';
 // Note: Using 'as any' for Supabase queries because the DB types are not generated yet
 // To fix properly, run: npx supabase gen types typescript --project-id YOUR_PROJECT_ID > src/types/database.ts
 
+import { AgeCategory } from '@/types/database';
+
 // Types
 export interface Program {
   id: string;
@@ -22,6 +24,9 @@ export interface Program {
   is_featured: boolean;
   is_premium: boolean;
   price_usd: number;
+  age_categories?: AgeCategory[];
+  min_age?: number;
+  max_age?: number;
   created_at: string;
 }
 
@@ -165,6 +170,7 @@ export const useProgramStore = create<ProgramState>((set, _get) => ({
 
   loadPrograms: async () => {
     set({ isLoading: true, error: null });
+    console.log('[ProgramStore] Loading programs...');
 
     const { data, error } = await supabase
       .from('programs' as any)
@@ -174,10 +180,12 @@ export const useProgramStore = create<ProgramState>((set, _get) => ({
       .order('created_at', { ascending: false });
 
     if (error) {
+      console.error('[ProgramStore] Error loading programs:', error);
       set({ isLoading: false, error: error.message });
       return;
     }
 
+    console.log('[ProgramStore] Programs loaded:', data?.length || 0, 'programs', data);
     const programs = (data || []) as Program[];
     const featured = programs.filter(p => p.is_featured);
     set({ 

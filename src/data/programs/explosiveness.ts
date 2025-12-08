@@ -1,7 +1,7 @@
 // Explosiveness Training Program - 30 days
 // Original program from the app
 
-import { TrainingProgram, TrainingDay, Section, Exercise, LocalizedText, LocalizedArray, Intensity, Location, ExerciseType } from '@/types/training';
+import { TrainingProgram, TrainingDay, Section, Intensity, Location } from '@/types/training';
 
 export const explosivenessProgram: TrainingProgram = {
   id: 'explosiveness-30',

@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowLeft, Clock, Play, CheckCircle2, Lock, ChevronRight, Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { useTranslation } from '@/lib/i18n';
 import { difficultyInfo } from '@/types/training';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/stores/authStore';  
 import { useProgressStore } from '@/stores/progressStore';
 import { useProgramStore, ProgramDay } from '@/stores/programStore';
+import { useSubscriptionStore } from '@/stores/subscriptionStore';
+import { ProgramPricing } from '@/components/subscription';
 import { cn } from '@/lib/utils';
 
 const intensityColors: Record<string, string> = {
@@ -29,6 +31,9 @@ export const ProgramDetailPage: React.FC = () => {
   const { profile } = useAuthStore();
   const { completedDays, loadCompletedDays } = useProgressStore();
   const { currentProgram, currentDays, isLoading, loadProgramDetails } = useProgramStore();
+  const { loadProgramAccess, hasAccess } = useSubscriptionStore();
+  
+  const [checkingAccess, setCheckingAccess] = useState(true);
 
   useEffect(() => {
     if (programId) {
@@ -39,8 +44,11 @@ export const ProgramDetailPage: React.FC = () => {
   useEffect(() => {
     if (profile?.id && programId) {
       loadCompletedDays(profile.id);
+      loadProgramAccess(profile.id).then(() => setCheckingAccess(false));
+    } else {
+      setCheckingAccess(false);
     }
-  }, [profile?.id, programId, loadCompletedDays]);
+  }, [profile?.id, programId, loadCompletedDays, loadProgramAccess]);
 
   // Get localized text helpers
   const getProgramTitle = () => {
@@ -103,7 +111,7 @@ export const ProgramDetailPage: React.FC = () => {
   };
 
   // Loading state
-  if (isLoading) {
+  if (isLoading || checkingAccess) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
@@ -124,6 +132,63 @@ export const ProgramDetailPage: React.FC = () => {
         >
           {language === 'uk' ? 'На головну' : language === 'cs' ? 'Na hlavní' : 'Go home'}
         </button>
+      </div>
+    );
+  }
+
+  // Check if program is premium and user has no access
+  const isPremium = currentProgram.is_premium;
+  const userHasAccess = !isPremium || hasAccess(programId || '');
+
+  // Show pricing for premium programs without access
+  if (isPremium && !userHasAccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-24">
+        {/* Header */}
+        <div className={cn(
+          'p-6 pb-8 bg-gradient-to-r',
+          currentProgram.category === 'explosiveness' && 'from-amber-500 to-orange-500',
+          currentProgram.category === 'endurance' && 'from-green-500 to-emerald-500',
+          currentProgram.category === 'technique' && 'from-blue-500 to-cyan-500',
+          currentProgram.category === 'strength' && 'from-red-500 to-rose-500',
+          currentProgram.category === 'agility' && 'from-purple-500 to-violet-500',
+          currentProgram.category === 'recovery' && 'from-teal-500 to-cyan-500',
+          !['explosiveness', 'endurance', 'technique', 'strength', 'agility', 'recovery'].includes(currentProgram.category) && 'from-primary-500 to-primary-600'
+        )}>
+          <button
+            onClick={() => navigate('/app')}
+            className="flex items-center gap-2 text-white/80 hover:text-white mb-4"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>{language === 'uk' ? 'Назад' : language === 'cs' ? 'Zpět' : 'Back'}</span>
+          </button>
+
+          <div className="flex items-center gap-4">
+            <span className="text-5xl">{currentProgram.icon || '⚽'}</span>
+            <div>
+              <h1 className="text-2xl font-black text-white">
+                {getProgramTitle()}
+              </h1>
+              <p className="text-white/90 text-sm mt-2">
+                {getProgramDescription()}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Pricing */}
+        <div className="px-4 py-8">
+          <ProgramPricing
+            programId={programId || ''}
+            programName={getProgramTitle()}
+            onAccessGranted={() => {
+              // Reload access after purchase/trial
+              if (profile?.id) {
+                loadProgramAccess(profile.id);
+              }
+            }}
+          />
+        </div>
       </div>
     );
   }

@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useAchievementStore } from '@/stores/achievementStore';
 import { AppLayout } from '@/components/layout';
+import { ToastProvider } from '@/components/ui';
+import { OnboardingFlow } from '@/components/onboarding';
 import { 
   AuthPage, 
   HomePage, 
@@ -13,9 +15,13 @@ import {
   AchievementsPage,
   ProgramsPage,
   ProgramDetailPage,
-  ProgramDayPage
+  ProgramDayPage,
+  SubscriptionsPage,
+  SubscriptionSuccessPage,
+  PricingPage,
+  SchedulePage
 } from '@/pages';
-import { CoachProgramsPage, ProgramEditorPage, DayEditorPage, TeamProgramsPage } from '@/pages/coach';
+import { CoachProgramsPage, ProgramEditorPage, DayEditorPage, TeamProgramsPage, PlayerActivityPage, PlayerDetailPage } from '@/pages/coach';
 import { AdminProgramsPage, AdminProgramEditorPage } from '@/pages/admin';
 import { AchievementUnlockedModal } from '@/components/achievements';
 import { Loader2 } from 'lucide-react';
@@ -40,9 +46,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 };
 
 function App() {
-  const { initialize, isInitialized, profile } = useAuthStore();
+  const { initialize, isInitialized, profile, updateProfile } = useAuthStore();
   const { newAchievement, dismissNewAchievement, loadEarnedAchievements } = useAchievementStore();
-  const [totalXp, setTotalXp] = useState(0);
+  const [totalXp] = useState(0);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     initialize();
@@ -52,8 +59,20 @@ function App() {
   useEffect(() => {
     if (profile?.id) {
       loadEarnedAchievements(profile.id);
+      
+      // Check if user needs onboarding (new user without role set)
+      if (!profile.onboarding_completed && !profile.role) {
+        setShowOnboarding(true);
+      }
     }
-  }, [profile?.id, loadEarnedAchievements]);
+  }, [profile?.id, profile?.onboarding_completed, profile?.role, loadEarnedAchievements]);
+
+  const handleOnboardingComplete = async () => {
+    setShowOnboarding(false);
+    if (profile?.id) {
+      await updateProfile({ onboarding_completed: true });
+    }
+  };
 
   if (!isInitialized) {
     return (
@@ -67,7 +86,7 @@ function App() {
   }
 
   return (
-    <>
+    <ToastProvider>
       <Routes>
         {/* Auth Routes */}
         <Route path="/auth" element={<AuthPage />} />
@@ -83,6 +102,7 @@ function App() {
         >
           <Route index element={<HomePage />} />
           <Route path="calendar" element={<CalendarPage />} />
+          <Route path="schedule" element={<SchedulePage />} />
           <Route path="stats" element={<StatsPage />} />
           <Route path="achievements" element={<AchievementsPage />} />
           <Route path="team" element={<TeamPage />} />
@@ -154,6 +174,22 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/app/coach/activity"
+          element={
+            <ProtectedRoute>
+              <PlayerActivityPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/coach/player/:playerId"
+          element={
+            <ProtectedRoute>
+              <PlayerDetailPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Admin Routes */}
         <Route
@@ -173,6 +209,32 @@ function App() {
           }
         />
 
+        {/* Subscription Routes */}
+        <Route
+          path="/app/pricing"
+          element={
+            <ProtectedRoute>
+              <PricingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/subscriptions"
+          element={
+            <ProtectedRoute>
+              <SubscriptionsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/subscription/success"
+          element={
+            <ProtectedRoute>
+              <SubscriptionSuccessPage />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Redirect root to app or auth */}
         <Route path="/" element={<Navigate to="/app" replace />} />
         
@@ -185,7 +247,12 @@ function App() {
         achievement={newAchievement} 
         onClose={dismissNewAchievement} 
       />
-    </>
+
+      {/* Onboarding Flow */}
+      {showOnboarding && (
+        <OnboardingFlow onComplete={handleOnboardingComplete} />
+      )}
+    </ToastProvider>
   );
 }
 

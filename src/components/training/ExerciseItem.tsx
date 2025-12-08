@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Check, ChevronDown, Info } from 'lucide-react';
+import { Check, ChevronDown, Info, AlertTriangle, Play, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n';
 import { ExerciseTimer } from './ExerciseTimer';
-import { Input } from '@/components/ui';
+import { activityLogger } from '@/lib/activityLogger';
+import { useAuthStore } from '@/stores/authStore';
 
 interface ExerciseItemProps {
   id: string;
+  dayKey: string;
   title: string;
   description?: string[];
   sets?: string;
@@ -17,6 +19,8 @@ interface ExerciseItemProps {
   inputLabel?: string;
   note?: string;
   timerDuration?: number;
+  expectedDurationSeconds?: number; // For verification
+  videoUrl?: string; // Video instruction URL
   isCompleted: boolean;
   measurementValue?: string;
   onToggle: () => void;
@@ -24,6 +28,8 @@ interface ExerciseItemProps {
 }
 
 export const ExerciseItem: React.FC<ExerciseItemProps> = ({
+  id,
+  dayKey,
   title,
   description,
   sets,
@@ -33,13 +39,59 @@ export const ExerciseItem: React.FC<ExerciseItemProps> = ({
   inputLabel,
   note,
   timerDuration,
+  expectedDurationSeconds,
+  videoUrl,
   isCompleted,
   measurementValue,
   onToggle,
   onSaveMeasurement,
 }) => {
   const { t, language } = useTranslation();
+  const { profile } = useAuthStore();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [startedAt, setStartedAt] = useState<Date | null>(null);
+  const [isSuspicious, setIsSuspicious] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
+  const hasStartedTimer = useRef(false);
+
+  // Start timing when exercise is expanded (user starts working on it)
+  useEffect(() => {
+    if (isExpanded && !isCompleted && profile?.id && !hasStartedTimer.current) {
+      hasStartedTimer.current = true;
+      setStartedAt(new Date());
+      
+      // Calculate expected duration: timer duration or estimate from sets/reps
+      const expectedDuration = expectedDurationSeconds || timerDuration || 
+        (sets ? parseInt(sets) * 30 : 60); // Default 30s per set or 60s
+      
+      activityLogger.startExerciseTimer(
+        profile.id,
+        id,
+        dayKey,
+        expectedDuration
+      );
+    }
+  }, [isExpanded, isCompleted, profile?.id, id, dayKey, expectedDurationSeconds, timerDuration, sets]);
+
+  // Handle toggle with verification
+  const handleToggle = async () => {
+    if (!isCompleted && profile?.id && startedAt) {
+      // Complete the exercise timer
+      const result = await activityLogger.completeExerciseTimer(
+        profile.id,
+        id,
+        dayKey
+      );
+      
+      if (result.isSuspicious) {
+        setIsSuspicious(true);
+        // Still allow completion but flag it
+        console.warn(`Suspicious activity: Exercise ${id} completed in ${result.actualDuration}s`);
+      }
+    }
+    
+    onToggle();
+  };
   
   // Format duration based on language
   const formatDuration = (seconds: number) => {
@@ -74,7 +126,7 @@ export const ExerciseItem: React.FC<ExerciseItemProps> = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onToggle();
+              handleToggle();
             }}
             className={cn(
               "mt-0.5 min-w-7 min-h-7 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all",
@@ -128,6 +180,18 @@ export const ExerciseItem: React.FC<ExerciseItemProps> = ({
                   ⏸️ {t('training.rest')}: {formatRest(restSeconds)}
                 </span>
               )}
+              {videoUrl && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowVideo(true);
+                  }}
+                  className="flex items-center gap-1 text-primary-600 hover:text-primary-700 font-medium"
+                >
+                  <Play size={14} className="fill-current" />
+                  {language === 'uk' ? 'Відео' : language === 'cs' ? 'Video' : 'Video'}
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -164,13 +228,27 @@ export const ExerciseItem: React.FC<ExerciseItemProps> = ({
                 </div>
               )}
 
+              {/* Suspicious activity warning */}
+              {isSuspicious && (
+                <div className="bg-red-50 p-3 rounded-xl border border-red-200 flex gap-2 text-sm text-red-800 mb-4">
+                  <AlertTriangle size={18} className="shrink-0 text-red-600 mt-0.5" />
+                  <span className="font-medium">
+                    {language === 'uk' 
+                      ? 'Вправа виконана занадто швидко. Тренер може перевірити.' 
+                      : language === 'cs'
+                      ? 'Cvičení dokončeno příliš rychle. Trenér může zkontrolovat.'
+                      : 'Exercise completed too fast. Coach may verify.'}
+                  </span>
+                </div>
+              )}
+
               {/* Timer */}
               {timerDuration && (
                 <ExerciseTimer 
                   duration={timerDuration} 
                   onComplete={() => {
                     if (!isCompleted) {
-                      onToggle();
+                      handleToggle();
                     }
                   }}
                 />
@@ -201,7 +279,76 @@ export const ExerciseItem: React.FC<ExerciseItemProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Video Modal */}
+      <AnimatePresence>
+        {showVideo && videoUrl && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+            onClick={() => setShowVideo(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-3xl bg-black rounded-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setShowVideo(false)}
+                className="absolute top-3 right-3 z-10 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+              >
+                <X size={24} />
+              </button>
+
+              {/* Video player */}
+              <div className="aspect-video">
+                {videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be') ? (
+                  <iframe
+                    src={getYouTubeEmbedUrl(videoUrl)}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    src={videoUrl}
+                    controls
+                    autoPlay
+                    className="w-full h-full object-contain"
+                  />
+                )}
+              </div>
+
+              {/* Title */}
+              <div className="p-4 bg-gray-900">
+                <h3 className="text-white font-semibold">{title}</h3>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
+
+// Helper function to convert YouTube URL to embed URL
+function getYouTubeEmbedUrl(url: string): string {
+  let videoId = '';
+  
+  if (url.includes('youtu.be/')) {
+    videoId = url.split('youtu.be/')[1]?.split('?')[0] || '';
+  } else if (url.includes('youtube.com/watch')) {
+    const urlParams = new URLSearchParams(url.split('?')[1]);
+    videoId = urlParams.get('v') || '';
+  } else if (url.includes('youtube.com/embed/')) {
+    videoId = url.split('youtube.com/embed/')[1]?.split('?')[0] || '';
+  }
+  
+  return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+}
 

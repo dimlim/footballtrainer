@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { Heart, Footprints, MapPin, Clock, Flame, Play, Square } from 'lucide-react';
+import { Heart, Footprints, MapPin, Flame, Play, Square } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useFitnessTracker } from '@/hooks/useFitnessTracker';

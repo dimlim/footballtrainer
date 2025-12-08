@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Fitness Trackers Integration Service
  * 

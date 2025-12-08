@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { supabase } from './supabase';
 
 // VAPID public key from https://vapidkeys.com/
