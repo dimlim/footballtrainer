@@ -16,65 +16,36 @@ export default defineConfig({
     host: true,
   },
   build: {
-    // Optimize for production
     target: 'es2020',
     minify: 'esbuild',
     sourcemap: false,
     
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          // React core
-          if (id.includes('node_modules/react/') || 
-              id.includes('node_modules/react-dom/') ||
-              id.includes('node_modules/react-router')) {
-            return 'vendor-react';
-          }
-          
-          // Recharts - load separately (heavy)
-          if (id.includes('node_modules/recharts') || 
-              id.includes('node_modules/d3-') ||
-              id.includes('node_modules/victory-vendor')) {
-            return 'vendor-charts';
-          }
+        manualChunks: {
+          // Core React - must be first
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           
           // Supabase
-          if (id.includes('node_modules/@supabase')) {
-            return 'vendor-supabase';
-          }
+          'vendor-supabase': ['@supabase/supabase-js'],
           
-          // UI libraries
-          if (id.includes('node_modules/lucide-react')) {
-            return 'vendor-icons';
-          }
+          // Animation
+          'vendor-motion': ['framer-motion'],
           
-          if (id.includes('node_modules/motion') || 
-              id.includes('node_modules/framer-motion')) {
-            return 'vendor-motion';
-          }
+          // Icons
+          'vendor-icons': ['lucide-react'],
           
           // Date utilities
-          if (id.includes('node_modules/date-fns')) {
-            return 'vendor-date';
-          }
+          'vendor-date': ['date-fns'],
           
-          // Other smaller vendors
-          if (id.includes('node_modules/zustand')) {
-            return 'vendor-state';
-          }
+          // State management
+          'vendor-state': ['zustand'],
           
-          if (id.includes('node_modules/canvas-confetti')) {
-            return 'vendor-confetti';
-          }
+          // Confetti
+          'vendor-confetti': ['canvas-confetti'],
         },
       },
     },
-    chunkSizeWarningLimit: 300,
-  },
-  
-  // Optimize dependencies
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'zustand'],
-    exclude: ['recharts'], // Don't pre-bundle recharts
+    chunkSizeWarningLimit: 500,
   },
 });
